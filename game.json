@@ -1,0 +1,25 @@
+{
+    "nodes": [
+        {"id": "Python Installation", "url": "", "visited": false},
+        {"id": "IDE Installation", "url": "", "visited": false},
+        {"id": "Basic I/O", "url": "", "visited": false},
+        {"id": "Functions", "url": "", "visited": false},
+        {"id": "Classes", "url": "", "visited": false},
+        {"id": "Logic Conditions and Loops", "url": "", "visited": false},
+        {"id": "Classes", "url": "", "visited": false},
+        {"id": "Inheritance", "url": "", "visited": false},
+        {"id": "Game", "url": "", "visited": false},
+    ],
+    "links": [
+        {"source": "Python Installation", "target": "IDE Installation", "value": 1},
+        {"source": "Python Installation", "target": "Basic I/O", "value": 1},
+        {"source": "IDE Installation", "target": "Basic I/O", "value": 1},
+        {"source": "Basic I/O", "target": "Logic Conditions and Loops", "value": 1},
+        {"source": "Basic I/O", "target": "Functions", "value": 1},
+        {"source": "Functions", "target": "Classes", "value": 1},
+        {"source": "Classes", "target": "Inheritance", "value": 1},
+        {"source": "Logic Conditions and Loops", "target": "Game", "value": 1},
+        {"source": "Functions", "target": "Game", "value": 1},
+        {"source": "Classes", "target": "Game", "value": 1}
+    ]
+}
