@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Graph from './Graph';
 import Example from './Example'
+import WebExtraction from './WebExtraction';
 
 const graphData = {
   nodes : [
@@ -26,6 +27,10 @@ const graphData = {
 
 
 function App() {
+
+  
+
+
   return (
     <div className="App">
       <center>
@@ -34,6 +39,7 @@ function App() {
       </center>   
       {/* <Graph  data={graphData} width={500} height={500}/> */}
       <Example></Example>
+      <WebExtraction url={"https://www.vt.edu/"}/>
     </div> 
   );
 }
