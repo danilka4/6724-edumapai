@@ -51,7 +51,7 @@ def data():
         'data': keymessage
         }
 
-def obtain_map_on_topic(topic):
+def obtain_map_on_topic(topic, gpt_version = 3):
     message_chain = []
     message_chain.append( {"role": "system", "content": 'I want to create a mind map mapping all the knowledge necessary to learn a subject. To accomplish this, I want you to create a json object with node and link fields. The nodes represent subjects. The links represent knowledge prerequisites. For example, knowing multiplication requires knowing addition, so a link is created from addition to multiplication. The nodes field will have the node name under "id," an empty "url" field, and a "visited" field that says false. The link field will have a "source" field and a "target" field, as well as a "value" field that just has 1 in it. The "source" represents a knowledge prerequisite to the "target" node. The nodes are specific and learnable topics that are not broad. If a node would be "<subject> basics," break it up into the basics that the user needs to know. The first node should be the very first basic block that the user should learn to get at learning about the subject. There should be branches of links so the mind map ends up non-linear. The last node should be what the user requests to learn about.'})
     message_chain.append({"role": "user", "content": "Create and return only the mind map for Covid 19"})
@@ -113,8 +113,12 @@ def obtain_map_on_topic(topic):
     ]
 }"""})
     message_chain.append({"role": "user", "content": f"Create and return only the mind map for {topic}"})
-    # model = "gpt-3.5-turbo-1106"
-    model = "gpt-4-1106-preview"
+    if gpt_version == 3:
+        model = "gpt-3.5-turbo-1106"
+    elif gpt_version == 4:
+        model = "gpt-4-1106-preview"
+    else:
+        return Exception("Pick 3 or 4 for gpt_version")
     client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
         model = model,
