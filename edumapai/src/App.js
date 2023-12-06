@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Graph from './Graph';
 import Example from './Example'
 import WebExtraction from './WebExtraction';
 
