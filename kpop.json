@@ -1,0 +1,26 @@
+{
+    "nodes": [
+        {    "name": "Music Genres", "link":"https://medium.com/@fandom_creators/must-listen-k-pop-exploring-the-diverse-genres-and-artists-beyond-the-charts-775457a75d6b"},
+        {    "name": "K-Pop Groups", "link":"https://www.90daykorean.com/best-kpop-groups/#:~:text=4%20Wrap%20Up%20Most%20popular,pop%20groups.%20BTS%20%28%EB%B0%A9%ED%83%84%EC%86%8C%EB%85%84%EB%8B%A8"},
+        {    "name": "Dance Styles", "link":"https://ononestudios.com/evolution-kpop-dance/"},
+        {    "name": "Fashion", "link":"https://bnn.network/arts/the-global-echo-of-k-pop-a-melody-that-reshapes-fashion/#:~:text=The%20significance%20of%20K,to%20replicate%20their%20idols%E2%80%99%20looks"},
+        {    "name": "Fan Culture", "link":"https://hikoco.co.nz/blogs/tmi/k-pop-fandom-culture"},
+        {    "name": "Korean Language", "link":"https://visitkoreaguide.com/the-influence-of-kpop-on-korean-language-learning/#:~:text=Cultural%20Exchange%20and%20Appreciation%20Conclusion,to%20Korean%20culture%20and%20language"},
+        {    "name": "K-Pop Awards", "link":"https://kingchoice.me/the-best-kpop-music-awards-show/"},
+        {    "name": "Global Impact", "link":"https://kpoplife.com/kpop-global-influence/#:~:text=Staff%20Writer%209%20months%20ago,on%20the%20global%20music%20industry"},
+        {    "name": "History of K-Pop", "link":"https://www.lafilm.edu/blog/a-brief-history-of-kpop/"},
+        {    "name": "Music Production", "link":"https://www.youtube.com/playlist?list=PLOHoVaTp8R7dfrJW5pumS0iD_dhlXKv17"}
+    ],
+    "links": [
+        {    "source": "Music Genres",   "target": "K-Pop Groups"},
+        {    "source": "K-Pop Groups",   "target": "Dance Styles"},
+        {    "source": "K-Pop Groups",   "target": "Fashion"},
+        {    "source": "K-Pop Groups",   "target": "Fan Culture"},
+        {    "source": "K-Pop Groups",   "target": "K-Pop Awards"},
+        {    "source": "Dance Styles",   "target": "Fashion"},
+        {    "source": "Fan Culture",   "target": "Korean Language"},
+        {    "source": "Global Impact",   "target": "History of K-Pop"},
+        {    "source": "K-Pop Groups",    "target": "Music Production"},
+        {    "source": "History of K-Pop",    "target": "Music Genres"}
+    ]
+}
