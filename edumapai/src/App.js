@@ -35,7 +35,7 @@ function App() {
     <div className="App">
       <center>
       <h1>EduMap</h1>
-      <h2>COVID Information</h2>
+      <h2>By: Xiaohang Tang, Tong Wu, Rexime Abulikemu, Sonal Sathe, Daniel Palamarchuk</h2>
       <UrlSearch />
       </center>   
       {/* <Graph  data={graphData} width={500} height={500}/> */}

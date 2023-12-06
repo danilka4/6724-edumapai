@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+import pandas as pd
 from flask_cors import CORS
 import requests
 from bs4 import BeautifulSoup
@@ -8,6 +9,7 @@ from flask import request
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+import json
 
 load_dotenv("env.env")
 api_key = os.getenv("API_KEY")
@@ -38,6 +40,15 @@ def extract_text_from_url(url):
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/jason', methods=['POST'])
+def json_post():
+    data = request.get_json()
+    print("#########",data['dataToSend']['param1'])
+    link = data['dataToSend']['param1']
+    json_object = pd.read_json(f"{link}")
+    return {
+        'data': json_object
+    }
 
 @app.route('/data', methods=['POST'])
 def data():

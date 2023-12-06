@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { Runtime, Inspector } from "@observablehq/runtime";
 import define from "./0f203da9fadaee30/0f203da9fadaee30@739";
 import "./Example.css";
+import ObtainJson from "./ObtainJson";
 
 function Example() {
     const ref = useRef();
@@ -19,13 +20,30 @@ function Example() {
         return () => runtime.dispose();
     }, [selectedOption]);
 
-    const handleDropdownChange = (event) => {
+    const handleDropdownChange = async (event) => {
     const selectedValue = event.target.value;
     setSelectedOption(selectedValue);
+  try {
+    // Check if the JSON file exists by fetching and checking the response status
+    const response = ObtainJson(`${selectedValue}.json`);
+
+    if (!response.ok) {
+      // JSON file does not exist or there was an error
+      console.error(`Error loading JSON data for ${selectedValue}.json:`, response.statusText);
+      return;
+    }
+
+    // JSON file exists, proceed to parse and use the data
+    const jsonData = await response.json();
+
+    console.log(`Loaded JSON data for ${selectedValue}.json:`, jsonData);
 
     // Check if the selected option is "Generate own map"
     setShowCustomMapInput(selectedValue === "option4");
-        // You can perform additional actions based on the selected option if needed
+    // You can perform additional actions based on the selected option if needed
+  } catch (error) {
+    console.error(`Error loading JSON data for ${selectedValue}.json:`, error);
+  }
     };
 
   const handleCustomMapNameChange = (event) => {
@@ -44,10 +62,10 @@ function Example() {
         <label htmlFor="dropdown">Select an option:</label>
         <select id="dropdown" value={selectedOption} onChange={handleDropdownChange}>
                             <option value="default" disabled>Select an option</option>
-                            <option value="option1">Covid Information</option>
-                            <option value="option2">Simple Linear Regression</option>
-                            <option value="option3">K-Pop</option>
-                            <option value="option4">Generate own map</option>
+                            <option value="covid">Covid Information</option>
+                            <option value="slr">Simple Linear Regression</option>
+                            <option value="kpop">K-Pop</option>
+                            <option value="custom_gen">Generate own map</option>
         </select>
       </div>
       {/* Conditionally render the custom map input field and button */}
