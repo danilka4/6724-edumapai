@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Example from './Example'
 import WebExtraction from './WebExtraction';
+import UrlSearch from './urlSearch';
 
 const graphData = {
   nodes : [
@@ -35,6 +36,7 @@ function App() {
       <center>
       <h1>EduMap</h1>
       <h2>COVID Information</h2>
+      <UrlSearch />
       </center>   
       {/* <Graph  data={graphData} width={500} height={500}/> */}
       <Example></Example>

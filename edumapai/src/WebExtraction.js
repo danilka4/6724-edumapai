@@ -25,7 +25,7 @@ function WebExtraction({url}) {
 
   return (
     <div>
-      <h1>{message}</h1>
+      <h4>{message}</h4>
     </div>
   );
 }
