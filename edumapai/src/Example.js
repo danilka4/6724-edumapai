@@ -5,7 +5,9 @@ import "./Example.css";
 
 function Example() {
     const ref = useRef();
-    const [selectedOption, setSelectedOption] = useState("default");
+  const [selectedOption, setSelectedOption] = useState("default");
+  const [customMapName, setCustomMapName] = useState("");
+  const [showCustomMapInput, setShowCustomMapInput] = useState(false);
 
     useEffect(() => {
         const runtime = new Runtime();
@@ -15,12 +17,25 @@ function Example() {
             }
         });
         return () => runtime.dispose();
-    }, []);
+    }, [selectedOption]);
 
     const handleDropdownChange = (event) => {
-        setSelectedOption(event.target.value);
+    const selectedValue = event.target.value;
+    setSelectedOption(selectedValue);
+
+    // Check if the selected option is "Generate own map"
+    setShowCustomMapInput(selectedValue === "option4");
         // You can perform additional actions based on the selected option if needed
     };
+
+  const handleCustomMapNameChange = (event) => {
+    setCustomMapName(event.target.value);
+  };
+
+  const handleGenerateMapClick = () => {
+    // Perform actions with the custom map name, e.g., pass it to the backend
+    console.log("Custom Map Name:", customMapName);
+  };
 
     return (
         <div>
@@ -35,6 +50,19 @@ function Example() {
                             <option value="option4">Generate own map</option>
         </select>
       </div>
+      {/* Conditionally render the custom map input field and button */}
+      {showCustomMapInput && (
+        <div className="CustomMapContainer">
+          <label htmlFor="customMapName">I want to learn about </label>
+          <input
+            type="text"
+            id="customMapName"
+            value={customMapName}
+            onChange={handleCustomMapNameChange}
+          />
+          <button onClick={handleGenerateMapClick}>Generate Map</button>
+        </div>
+      )}
     </div>
       <div ref={ref}></div>
     </div>
