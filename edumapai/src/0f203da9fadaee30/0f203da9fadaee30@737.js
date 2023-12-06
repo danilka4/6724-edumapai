@@ -2,263 +2,18 @@ function _1(md){return(
 md`# InfoMap`
 )}
 
-function _hov(){return(
-null
+function _topics_gone_over(){return(
+["Spread", "Risk"]
 )}
 
-function _topics(FileAttachment){return(
-FileAttachment("topics@6.json").json()
+function _3(EduMap,topics,topics_gone_over){return(
+EduMap(topics, topics_gone_over)
 )}
 
-function _4(topics){return(
-topics.nodes.filter((d) => d.id == "Symptoms").visited = true
-)}
-
-function _5(topics){return(
-topics
-)}
-
-function _graph(addTooltips,ForceGraph,topics,width,invalidation){return(
-addTooltips(
-  ForceGraph(topics, {
-    nodeId: (d) => d.id, // node identifier, to match links
-    nodeGroup: (d) => d.group, // group identifier, for color
-    nodeTitle: (d) => d.id, // hover text
-    width,
-    height: 520,
-    invalidation // stop when the cell is re-run
-  })
-)
-)}
-
-function _ForceGraph(d3){return(
-function ForceGraph(
-  {
-    nodes, // an iterable of node objects (typically [{id}, …])
-    links // an iterable of link objects (typically [{source, target}, …])
-  },
-  {
-    nodeId = (d) => d.id, // given d in nodes, returns a unique identifier (string)
-    nodeGroup, // given d in nodes, returns an (ordinal) value for color
-    nodeGroups, // an array of ordinal values representing the node groups
-    nodeTitle, // given d in nodes, a title string
-    nodeFill = "currentColor", // node stroke fill (if not using a group color encoding)
-    nodeStroke = "#fff", // node stroke color
-    nodeStrokeWidth = 1.5, // node stroke width, in pixels
-    nodeStrokeOpacity = 1, // node stroke opacity
-    nodeRadius = 10, // node radius, in pixels
-    nodeStrength = -100,
-    linkSource = ({ source }) => source, // given d in links, returns a node identifier string
-    linkTarget = ({ target }) => target, // given d in links, returns a node identifier string
-    linkStroke = "#999", // link stroke color
-    linkStrokeOpacity = 1, // link stroke opacity
-    linkStrokeWidth = 3, // given d in links, returns a stroke width in pixels
-    linkStrokeLinecap = "round", // link stroke linecap
-    linkStrength,
-    colors = d3.schemeTableau10, // an array of color strings, for the node groups
-    width = 640, // outer width, in pixels
-    height = 400, // outer height, in pixels
-    invalidation // when this promise resolves, stop the simulation
-  } = {}
-) {
-  // Compute values.
-  const N = d3.map(nodes, nodeId).map(intern);
-  const LS = d3.map(links, linkSource).map(intern);
-  const LT = d3.map(links, linkTarget).map(intern);
-  if (nodeTitle === undefined) nodeTitle = (_, i) => N[i];
-  const T = nodeTitle == null ? null : d3.map(nodes, nodeTitle);
-  const G = nodeGroup == null ? null : d3.map(nodes, nodeGroup).map(intern);
-  const W =
-    typeof linkStrokeWidth !== "function"
-      ? null
-      : d3.map(links, linkStrokeWidth);
-  const L = typeof linkStroke !== "function" ? null : d3.map(links, linkStroke);
-
-  // Replace the input nodes and links with mutable objects for the simulation.
-  nodes = d3.map(nodes, (_, i) => ({ id: N[i] }));
-  links = d3.map(links, (_, i) => ({ source: LS[i], target: LT[i] }));
-
-  // Compute default domains.
-  if (G && nodeGroups === undefined) nodeGroups = d3.sort(G);
-
-  // Construct the scales.
-  const color = nodeGroup == null ? null : d3.scaleOrdinal(nodeGroups, colors);
-
-  // Construct the forces.
-  const forceNode = d3.forceManyBody();
-  const forceLink = d3.forceLink(links).id(({ index: i }) => N[i]);
-  if (nodeStrength !== undefined) forceNode.strength(nodeStrength);
-  if (linkStrength !== undefined) forceLink.strength(linkStrength);
-
-  const simulation = d3
-    .forceSimulation(nodes)
-    .force("link", forceLink)
-    .force("charge", forceNode)
-    .force("center", d3.forceCenter())
-    .on("tick", ticked);
-
-  const svg = d3
-    .create("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [-width / 2, -height / 2, width, height])
-    .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
-
-  svg
-    .append("svg:defs")
-    .selectAll("marker")
-    .data(["end"]) // Different link/path types can be defined here
-    .enter()
-    .append("svg:marker") // This section adds in the arrows
-    .attr("id", String)
-    .attr("viewBox", "0 -5 10 10")
-    .attr("fill", linkStroke)
-    .attr("fill-opacity", linkStrokeOpacity)
-    .attr("refX", 20)
-    .attr("refY", 0)
-    .attr("markerWidth", 3)
-    .attr("markerHeight", 3)
-    .attr("orient", "auto")
-    .append("svg:path")
-    .attr("d", "M0,-5L10,0L0,5");
-
-  const link = svg
-    .append("g")
-    .attr("stroke", typeof linkStroke !== "function" ? linkStroke : null)
-    .attr("stroke-opacity", linkStrokeOpacity)
-    .attr(
-      "stroke-width",
-      typeof linkStrokeWidth !== "function" ? linkStrokeWidth : null
-    )
-    .selectAll("line")
-    .data(links)
-    .join("line")
-    .attr("marker-end", "url(#end)");
-
-  // const link = svg.append("g")
-  //   .attr("fill", "none")
-  //   .attr("stroke", typeof linkStroke !== "function" ? linkStroke : null)
-  //   .attr("stroke-width", 1.5)
-  // .selectAll("path")
-  // .data(links)
-  // .join("path")
-  //   .attr("marker-end", d => `url(${new URL(`#arrow-${d.type}`, location)})`);
-
-  const node = svg
-    .append("g")
-    .attr("fill", nodeFill)
-    .attr("stroke", nodeStroke)
-    .attr("stroke-opacity", nodeStrokeOpacity)
-    .attr("stroke-width", nodeStrokeWidth)
-    .selectAll("circle")
-    .data(nodes)
-    .join("circle")
-    .attr("r", nodeRadius)
-    .call(drag(simulation));
-
-  node
-    .append("text")
-    .attr("x", -6)
-    .attr("y", -15)
-    .text((d) => d.id)
-    .lower()
-    .attr("stroke", "black")
-    .attr("stroke-width", 3);
-
-  // const label = svg
-  //   .append("g")
-  //   .selectAll("text")
-  //   .data(nodes)
-  //   .join("text")
-  //   .text(function (d) {
-  //     return d.id;
-  //   })
-  //   .style("text-anchor", "middle")
-  //   .style("fill", "#555")
-  //   .style("font-family", "Arial")
-  //   .style("font-size", 12);
-  // nodes
-  //   .append("g")
-  //   .selectAll("text")
-  //   .data(nodes)
-  //   .join("text")
-  //   .text((d) => d.id)
-  //   .attr("x", 30 + 4)
-  //   .attr("y", "0.31em");
-
-  //   .on("mouseover", (event, r) => {
-  //     bg = d3.select(event.target).style("fill"); // save the current color of the rect for mouseout
-  //     d3.select(event.target).style("fill", "orange"); // Modify SVG DOM
-  //     // text.html(r.Name + " " + r.PercentCollegeGrad);
-  //     // text.attr("x", xScale(r.Abbrev)); //.attr("y", yScale(r.PercentCollegeGrad));
-  //     mutable hov = r; // Export hover selection
-  //   })
-  //   .on("mouseout", (event, r) => {
-  //     d3.select(event.target).style("fill", bg);
-  //   });
-  // let bg = null;
-
-  if (W) link.attr("stroke-width", ({ index: i }) => W[i]);
-  if (L) link.attr("stroke", ({ index: i }) => L[i]);
-  if (G) node.attr("fill", ({ index: i }) => color(G[i]));
-  if (T) node.append("title").text(({ index: i }) => T[i]);
-  if (invalidation != null) invalidation.then(() => simulation.stop());
-
-  function intern(value) {
-    return value !== null && typeof value === "object"
-      ? value.valueOf()
-      : value;
-  }
-
-  function ticked() {
-    link
-      .attr("x1", (d) => d.source.x)
-      .attr("y1", (d) => d.source.y)
-      .attr("x2", (d) => d.target.x)
-      .attr("y2", (d) => d.target.y);
-
-    node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
-  }
-
-  function drag(simulation) {
-    function dragstarted(event) {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
-    }
-
-    function dragged(event) {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
-    }
-
-    function dragended(event) {
-      if (!event.active) simulation.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
-    }
-
-    return d3
-      .drag()
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended);
-  }
-
-  return Object.assign(svg.node(), { scales: { color } });
-}
-)}
-
-function _8(html){return(
-html`
-<button id="switchmodes">switchmodes</button>
-`
-)}
-
-function _chart(topics,d3,width,height,types,color,linkArc,invalidation)
-{
-  const links = topics.links.map((d) => Object.create(d));
-  const nodes = topics.nodes.map((d) => Object.create(d));
+function _EduMap(d3,color,width,height,color_border,linkArc,invalidation){return(
+function EduMap(nodes_and_links, nodes_visited) {
+  const links = nodes_and_links.links;
+  const nodes = nodes_and_links.nodes;
   // keep track of if tooltip is hidden or not
   var isTooltipHidden = true;
   var tooltip = d3
@@ -273,9 +28,33 @@ function _chart(topics,d3,width,height,types,color,linkArc,invalidation)
     .style("background-color", "rgba(230, 230, 230, 0.9)")
     .style("border-radius", "5px")
     .style("visibility", "hidden")
-    .text("");
+    .text("")
+    .on("mouseleave", leaveTip);
+
+  function leaveTip(event, node) {
+    // debugger;
+    let clicked_circle = d3.select(this);
+    // debugger;
+    // clicked_circle.visited = !clicked_node.visited;
+    // clicked_circle.attr("fill", (d) => color(d.visited));
+
+    // update visibility
+    // isTooltipHidden = !isTooltipHidden;
+    isTooltipHidden = true;
+    var visibility = isTooltipHidden ? "hidden" : "visible";
+    // debugger;
+    // load tooltip content (if it changes based on node)
+    // loadTooltipContent(node, clicked_circle);
+
+    // place tooltip where cursor was
+    return tooltip
+      .style("top", event.pageY - 10 + "px")
+      .style("left", event.pageX + 10 + "px")
+      .style("visibility", visibility);
+  }
+
   // add html content to tooltip
-  function loadTooltipContent(node) {
+  function loadTooltipContent(node, circle) {
     var htmlContent = "<div>";
     var vis = "";
     if (node.visited) {
@@ -303,13 +82,14 @@ function _chart(topics,d3,width,height,types,color,linkArc,invalidation)
     if (button) {
       button.on("click", function () {
         var clickedNode = node; // Capture the correct node in a closure
+        var cir = circle;
         // debugger;
         // var currentColor = clickedNode.fill;
         clickedNode.visited = !clickedNode.visited;
-
+        cir.attr("fill", color(clickedNode.visited));
         // var newColor = currentColor === "red" ? "blue" : "red"; // Customize the colors
         // clickedNode.attr("fill", newColor);
-
+        // debugger;
         // // Reset the button text
         var vis = "";
         if (node.visited) {
@@ -341,7 +121,7 @@ function _chart(topics,d3,width,height,types,color,linkArc,invalidation)
   svg
     .append("defs")
     .selectAll("marker")
-    .data(types)
+    .data([true, false])
     .join("marker")
     .attr("id", "POINT")
     .attr("viewBox", "0 -5 10 10")
@@ -373,15 +153,17 @@ function _chart(topics,d3,width,height,types,color,linkArc,invalidation)
     .data(nodes)
     .join("g")
     .call(drag(simulation));
-
+  // debugger;
   node
     .append("circle")
-    .attr("stroke", "white")
-    .attr("stroke-width", 1.5)
+    // .attr("stroke", "white")
+    // .attr("stroke-width", 1.5)
     .attr("r", 10)
     .attr("visited", (d) => d.visited)
     .attr("fill", (d) => color(d.visited))
-    .on("click", clickNode);
+    .attr("stroke", (d) => color_border(nodes_visited.includes(d.id)))
+    .attr("stroke-width", "5px")
+    .on("mouseenter", enterNode);
 
   node
     .append("text")
@@ -393,18 +175,20 @@ function _chart(topics,d3,width,height,types,color,linkArc,invalidation)
     .attr("stroke", "white")
     .attr("stroke-width", 3);
 
-  function clickNode(event, node) {
+  function enterNode(event, node) {
     // debugger;
-    let clicked_node = d3.select(this);
+    let clicked_circle = d3.select(this);
     // debugger;
-    clicked_node.visited = !clicked_node.visited;
-    clicked_node.attr("fill", (d) => color(d.visited));
-    // update visibility
-    isTooltipHidden = !isTooltipHidden;
-    var visibility = isTooltipHidden ? "hidden" : "visible";
+    // clicked_circle.visited = !clicked_node.visited;
+    // clicked_circle.attr("fill", (d) => color(d.visited));
 
+    // update visibility
+    // isTooltipHidden = !isTooltipHidden;
+    isTooltipHidden = false;
+    var visibility = isTooltipHidden ? "hidden" : "visible";
+    // debugger;
     // load tooltip content (if it changes based on node)
-    loadTooltipContent(node);
+    loadTooltipContent(node, clicked_circle);
 
     if (isTooltipHidden) {
       unPinNode(node);
@@ -453,11 +237,26 @@ function _chart(topics,d3,width,height,types,color,linkArc,invalidation)
       .on("drag", dragged)
       .on("end", dragended);
   }
-  // hover(node, invalidation);
 
   return svg.node();
 }
+)}
 
+function _hov(){return(
+null
+)}
+
+function _topics(FileAttachment){return(
+FileAttachment("topics@7.json").json()
+)}
+
+function _7(topics){return(
+topics.nodes.filter((d) => d.id == "Symptoms").visited = true
+)}
+
+function _8(topics){return(
+topics
+)}
 
 function _tipcontent(){return(
 function tipcontent(d) {
@@ -482,12 +281,12 @@ function _height(){return(
 600
 )}
 
-function _types(topics){return(
-Array.from(new Set(topics.nodes.map((d) => d.visited)))
+function _color(d3){return(
+d3.scaleOrdinal([true, false], ["#0D0887", "#CC4778"])
 )}
 
-function _color(d3,types){return(
-d3.scaleOrdinal(types, d3.schemeCategory10)
+function _color_border(d3){return(
+d3.scaleOrdinal([true, false], ["#F0F921", "#FFFFFF"])
 )}
 
 function _ho(){return(
@@ -528,10 +327,6 @@ function _ho(){return(
 
 function _clicked(){return(
 false
-)}
-
-function _17(d3,chart){return(
-d3.select(chart)
 )}
 
 function _addTooltips(d3,id_generator,$0,ho,html){return(
@@ -674,30 +469,28 @@ export default function define(runtime, observer) {
   const main = runtime.module();
   function toString() { return this.url; }
   const fileAttachments = new Map([
-    ["topics@6.json", {url: new URL("./files/32242577fe1198eeaec0611ca6367c07928078cbd28409d1d33bf830cf0028fca67cc129e45fd516d1df7db5bb3a488cf6be79381b2b0ed3fb4a9603e73f9755.json", import.meta.url), mimeType: "application/json", toString}]
+    ["topics@7.json", {url: new URL("./files/41747d0fb7759d4d4a2874d434631d5c5d865a1e4a0acf5d08e1ae3307ec8d883a1381859c89f791bd41ba7a57bb053e99e2db873ad1cbe8a868e06fca094095.json", import.meta.url), mimeType: "application/json", toString}]
   ]);
   main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
   main.variable(observer()).define(["md"], _1);
+  main.variable(observer("topics_gone_over")).define("topics_gone_over", _topics_gone_over);
+  main.variable(observer()).define(["EduMap","topics","topics_gone_over"], _3);
+  main.variable(observer("EduMap")).define("EduMap", ["d3","color","width","height","color_border","linkArc","invalidation"], _EduMap);
   main.define("initial hov", _hov);
   main.variable(observer("mutable hov")).define("mutable hov", ["Mutable", "initial hov"], (M, _) => new M(_));
   main.variable(observer("hov")).define("hov", ["mutable hov"], _ => _.generator);
   main.variable(observer("topics")).define("topics", ["FileAttachment"], _topics);
-  main.variable(observer()).define(["topics"], _4);
-  main.variable(observer()).define(["topics"], _5);
-  main.variable(observer("graph")).define("graph", ["addTooltips","ForceGraph","topics","width","invalidation"], _graph);
-  main.variable(observer("ForceGraph")).define("ForceGraph", ["d3"], _ForceGraph);
-  main.variable(observer()).define(["html"], _8);
-  main.variable(observer("chart")).define("chart", ["topics","d3","width","height","types","color","linkArc","invalidation"], _chart);
+  main.variable(observer()).define(["topics"], _7);
+  main.variable(observer()).define(["topics"], _8);
   main.variable(observer("tipcontent")).define("tipcontent", _tipcontent);
   main.variable(observer("linkArc")).define("linkArc", _linkArc);
   main.variable(observer("height")).define("height", _height);
-  main.variable(observer("types")).define("types", ["topics"], _types);
-  main.variable(observer("color")).define("color", ["d3","types"], _color);
+  main.variable(observer("color")).define("color", ["d3"], _color);
+  main.variable(observer("color_border")).define("color_border", ["d3"], _color_border);
   main.variable(observer("ho")).define("ho", _ho);
   main.define("initial clicked", _clicked);
   main.variable(observer("mutable clicked")).define("mutable clicked", ["Mutable", "initial clicked"], (M, _) => new M(_));
   main.variable(observer("clicked")).define("clicked", ["mutable clicked"], _ => _.generator);
-  main.variable(observer()).define(["d3","chart"], _17);
   main.variable(observer("addTooltips")).define("addTooltips", ["d3","id_generator","mutable clicked","ho","html"], _addTooltips);
   main.variable(observer("id_generator")).define("id_generator", _id_generator);
   return main;
