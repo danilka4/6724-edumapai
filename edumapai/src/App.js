@@ -38,7 +38,7 @@ function App() {
       </center>   
       {/* <Graph  data={graphData} width={500} height={500}/> */}
       <Example></Example>
-      <WebExtraction url={"https://www.vt.edu/"}/>
+      {/* <WebExtraction url={"https://www.vt.edu/"}/> */}
     </div> 
   );
 }

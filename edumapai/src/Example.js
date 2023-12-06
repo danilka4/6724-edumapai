@@ -1,6 +1,6 @@
 import React, {useRef, useEffect} from "react";
 import {Runtime, Inspector} from "@observablehq/runtime";
-import define from "./0f203da9fadaee30/0f203da9fadaee30@737";
+import define from "./0f203da9fadaee30/0f203da9fadaee30@739";
 
 function Example() {
   const ref = useRef();

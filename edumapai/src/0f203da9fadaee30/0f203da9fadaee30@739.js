@@ -6,7 +6,7 @@ function _topics_gone_over(){return(
 ["Spread", "Risk"]
 )}
 
-function _3(EduMap,topics,topics_gone_over){return(
+function _chart(EduMap,topics,topics_gone_over){return(
 EduMap(topics, topics_gone_over)
 )}
 
@@ -68,7 +68,7 @@ function EduMap(nodes_and_links, nodes_visited) {
       '</h4>\n<p><a href="' +
       node.url +
       '" target="blank">' +
-      "cdc info" +
+      "info" +
       "</a></p>\n<button name='switchmodes'>" +
       vis +
       // node.visited
@@ -474,7 +474,7 @@ export default function define(runtime, observer) {
   main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
   main.variable(observer()).define(["md"], _1);
   main.variable(observer("topics_gone_over")).define("topics_gone_over", _topics_gone_over);
-  main.variable(observer()).define(["EduMap","topics","topics_gone_over"], _3);
+  main.variable(observer("chart")).define("chart", ["EduMap","topics","topics_gone_over"], _chart);
   main.variable(observer("EduMap")).define("EduMap", ["d3","color","width","height","color_border","linkArc","invalidation"], _EduMap);
   main.define("initial hov", _hov);
   main.variable(observer("mutable hov")).define("mutable hov", ["Mutable", "initial hov"], (M, _) => new M(_));
