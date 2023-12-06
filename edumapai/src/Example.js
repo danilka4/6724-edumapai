@@ -1,83 +1,44 @@
-import React, {useRef, useEffect} from "react";
-import {Runtime, Inspector} from "@observablehq/runtime";
+import React, { useRef, useEffect, useState } from "react";
+import { Runtime, Inspector } from "@observablehq/runtime";
 import define from "./0f203da9fadaee30/0f203da9fadaee30@739";
+import "./Example.css";
 
 function Example() {
-  const ref = useRef();
+    const ref = useRef();
+    const [selectedOption, setSelectedOption] = useState("default");
 
-  useEffect(() => {
-    const runtime = new Runtime();
-    runtime.module(define, name => {
-      if (name === "chart") {
-        return new Inspector(ref.current);
-      }
-    });
-    return () => runtime.dispose();
-  }, []);
+    useEffect(() => {
+        const runtime = new Runtime();
+        runtime.module(define, name => {
+            if (name === "chart") {
+                return new Inspector(ref.current);
+            }
+        });
+        return () => runtime.dispose();
+    }, []);
 
-  return (
-    <div className="Graph">
+    const handleDropdownChange = (event) => {
+        setSelectedOption(event.target.value);
+        // You can perform additional actions based on the selected option if needed
+    };
+
+    return (
+        <div>
+    <div className="GraphContainer">
+      <div className="DropdownContainer">
+        <label htmlFor="dropdown">Select an option:</label>
+        <select id="dropdown" value={selectedOption} onChange={handleDropdownChange}>
+                            <option value="default" disabled>Select an option</option>
+                            <option value="option1">Covid Information</option>
+                            <option value="option2">Simple Linear Regression</option>
+                            <option value="option3">K-Pop</option>
+                            <option value="option4">Generate own map</option>
+        </select>
+      </div>
+    </div>
       <div ref={ref}></div>
     </div>
-  );
+                );
 }
 
-export default Example;
-
-// import React, { useRef, useEffect } from 'react';
-// import { Runtime, Inspector } from '@observablehq/runtime';
-// import define from './0f203da9fadaee30/0f203da9fadaee30@540';
-// import {
-//   Center,
-//   Box,
-//   Menu,
-//   MenuButton,
-//   Button,
-//   MenuList,
-//   MenuItem,
-//   ChakraProvider,
-//   Divider,
-//   Heading,
-//   VStack,
-// } from '@chakra-ui/react';
-// import { ChevronDownIcon } from '@chakra-ui/icons';
-
-// function Example() {
-//   const ref = useRef();
-
-//   useEffect(() => {
-//     const runtime = new Runtime();
-//     runtime.module(define, (name) => {
-//       if (name === 'chart') {
-//         return new Inspector(ref.current);
-//       }
-//     });
-//     return () => runtime.dispose();
-//   }, []);
-
-//   return (
-//     <ChakraProvider>
-//       <VStack>
-//         <Box w="100%" p={4} bg="gray.100">
-//           <Heading size="md">My Observable Graph</Heading>
-//           <Menu>
-//             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-//               Options
-//             </MenuButton>
-//             <MenuList>
-//               <MenuItem>Option 1</MenuItem>
-//               <MenuItem>Option 2</MenuItem>
-//               <MenuItem>Option 3</MenuItem>
-//             </MenuList>
-//           </Menu>
-//           <Divider orientation="horizontal" />
-//         </Box>
-//         <Center flex="1" p={4}>
-//           <Box ref={ref} w="100%" h="100%" bg="white" />
-//         </Center>
-//       </VStack>
-//     </ChakraProvider>
-//   );
-// }
-
-// export default Example;
+                export default Example;
