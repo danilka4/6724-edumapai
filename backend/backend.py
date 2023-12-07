@@ -45,6 +45,11 @@ def json_post():
     data = request.get_json()
     print("#########",data['dataToSend']['param1'])
     link = data['dataToSend']['param1']
+    if link == "custom_gen.json":
+        edumap = obtain_map_on_topic("PCA")
+        return {
+            'data': edumap
+        }
     with open(f"data/{link}", 'r') as file:
         json_object = json.load(file)
     return {
@@ -138,6 +143,6 @@ def obtain_map_on_topic(topic, gpt_version = 3):
         messages=message_chain
     )
     # print(response.choices[0].message.content)
-    return response.choices[0].message.content
+    return json.loads(response.choices[0].message.content)
 if __name__ == '__main__':
     app.run(host='localhost', debug=True)
