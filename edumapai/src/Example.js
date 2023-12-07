@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from "react";
 import { Runtime, Inspector } from "@observablehq/runtime";
 import define from "./0f203da9fadaee30/0f203da9fadaee30@739";
 import "./Example.css";
-import ObtainJson from "./obtainJson";
 
 function Example() {
     const ref = useRef();

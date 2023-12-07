@@ -45,7 +45,8 @@ def json_post():
     data = request.get_json()
     print("#########",data['dataToSend']['param1'])
     link = data['dataToSend']['param1']
-    json_object = pd.read_json(f"{link}")
+    with open(f"data/{link}", 'r') as file:
+        json_object = json.load(file)
     return {
         'data': json_object
     }
