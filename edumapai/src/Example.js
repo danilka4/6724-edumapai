@@ -64,6 +64,12 @@ function Example() {
     const handleDropdownChange = async (event) => {
         const selectedValue = event.target.value;
         setSelectedOption(selectedValue);
+        if (selectedValue === "custom_gen") {
+
+            // Check if the selected option is "Generate own map"
+            setShowCustomMapInput(selectedValue === "custom_gen");
+            return;
+        }
         try {
             // Check if the JSON file exists by fetching and checking the response status
             const dataToSend = { param1: `${selectedValue}.json` };
@@ -85,9 +91,6 @@ function Example() {
             await setJsonData (await response.json());
 
             console.log(`Loaded JSON data for ${selectedValue}.json:`, jsonData);
-
-            // Check if the selected option is "Generate own map"
-            setShowCustomMapInput(selectedValue === "custom_gen");
             console.log("HEHEHE", jsonData);
             // You can perform additional actions based on the selected option if needed
         } catch (error) {
@@ -99,9 +102,38 @@ function Example() {
         setCustomMapName(event.target.value);
     };
 
-    const handleGenerateMapClick = () => {
+    const handleGenerateMapClick = async () => {
         // Perform actions with the custom map name, e.g., pass it to the backend
         console.log("Custom Map Name:", customMapName);
+        try {
+            // Check if the JSON file exists by fetching and checking the response status
+            const dataToSend = { param1: `custom_gen.json` , topic: customMapName};
+            const response = await fetch("/jason", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ dataToSend }),
+            });
+
+            if (!response.ok) {
+                // JSON file does not exist or there was an error
+                console.error(`Error loading JSON data for the custom generation`, response.statusText);
+                return;
+            }
+
+            // JSON file exists, proceed to parse and use the data
+            await setJsonData (await response.json());
+
+            console.log(`Loaded JSON data for custom json:`, jsonData);
+
+            // Check if the selected option is "Generate own map"
+            // setShowCustomMapInput(selectedValue === "custom_gen");
+            console.log("HEHEHE", jsonData);
+            // You can perform additional actions based on the selected option if needed
+        } catch (error) {
+            console.error(`Error loading JSON data for custom json:`, error);
+        }
     };
 
     return (

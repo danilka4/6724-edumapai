@@ -46,7 +46,7 @@ def json_post():
     print("#########",data['dataToSend']['param1'])
     link = data['dataToSend']['param1']
     if link == "custom_gen.json":
-        edumap = obtain_map_on_topic("PCA")
+        edumap = obtain_map_on_topic(data['dataToSend']['topic'])
         return {
             'data': edumap
         }
