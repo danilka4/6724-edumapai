@@ -8,7 +8,7 @@ function Example() {
     const [selectedOption, setSelectedOption] = useState("default");
     const [customMapName, setCustomMapName] = useState("");
     const [showCustomMapInput, setShowCustomMapInput] = useState(false);
-    var jsonData = {
+    const [jsonData, setJsonData] = useState ({
     "nodes": [
         {"id": "About", "url": "https://www.cdc.gov/coronavirus/2019-ncov/your-health/about-covid-19.html#:~:text=COVID%2D19%20", "visited": true},
         {"id": "Variants", "url": "https://www.cdc.gov/coronavirus/2019-ncov/variants/index.html#:~:text=Variants%20Are%20Expected&text=Some%20changes%20and%20mutations%20allow,and%20become%20harder%20to%20stop", "visited": false},
@@ -38,27 +38,28 @@ function Example() {
         {"source": "Misinformation", "target": "Variants", "value": 1},
         {"source": "Exposure", "target": "Symptoms"}
     ]
-};
+  });
 
     useEffect(() => {
         const runtime = new Runtime();
         runtime.module(define, (name, value) => {
-            if (name === "EduMap") {
+            if (name === "EduMap" && jsonData != undefined) {
+                console.log("define", jsonData);
                 // Define a generator cell for EduMap
                 return {
                     fulfilled: (value) => {
                         // Access the value and update the map accordingly
                         // value will contain the result of the cell execution
-                        console.log(jsonData)
+                        console.log("test",jsonData)
                         ref.current.innerHTML = "";
                         ref.current.appendChild(value(
-                            jsonData, []));
+                            jsonData.data, []));
                     }
                 };
             }
         });
         return () => runtime.dispose();
-    }, [selectedOption]);
+    }, [jsonData]);
 
     const handleDropdownChange = async (event) => {
         const selectedValue = event.target.value;
@@ -81,7 +82,7 @@ function Example() {
             }
 
             // JSON file exists, proceed to parse and use the data
-            jsonData = await response.json();
+            await setJsonData (await response.json());
 
             console.log(`Loaded JSON data for ${selectedValue}.json:`, jsonData);
 
