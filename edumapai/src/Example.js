@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { Runtime, Inspector } from "@observablehq/runtime";
 import define from "./0f203da9fadaee30/0f203da9fadaee30@739";
 import "./Example.css";
-import ObtainJson from "./ObtainJson";
+import ObtainJson from "./obtainJson";
 
 function Example() {
     const ref = useRef();
@@ -21,29 +21,36 @@ function Example() {
     }, [selectedOption]);
 
     const handleDropdownChange = async (event) => {
-    const selectedValue = event.target.value;
-    setSelectedOption(selectedValue);
-  try {
-    // Check if the JSON file exists by fetching and checking the response status
-    const response = ObtainJson(`${selectedValue}.json`);
+      const selectedValue = event.target.value;
+      setSelectedOption(selectedValue);
+      try {
+        // Check if the JSON file exists by fetching and checking the response status
+        const dataToSend = { param1: `${selectedValue}.json` };
+        const response = await fetch("/jason", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ dataToSend }),
+        });
 
-    if (!response.ok) {
-      // JSON file does not exist or there was an error
-      console.error(`Error loading JSON data for ${selectedValue}.json:`, response.statusText);
-      return;
-    }
+        if (!response.ok) {
+          // JSON file does not exist or there was an error
+          console.error(`Error loading JSON data for ${selectedValue}.json:`, response.statusText);
+          return;
+        }
 
-    // JSON file exists, proceed to parse and use the data
-    const jsonData = await response.json();
+        // JSON file exists, proceed to parse and use the data
+        const jsonData = await response.json();
 
-    console.log(`Loaded JSON data for ${selectedValue}.json:`, jsonData);
+        console.log(`Loaded JSON data for ${selectedValue}.json:`, jsonData);
 
-    // Check if the selected option is "Generate own map"
-    setShowCustomMapInput(selectedValue === "option4");
-    // You can perform additional actions based on the selected option if needed
-  } catch (error) {
-    console.error(`Error loading JSON data for ${selectedValue}.json:`, error);
-  }
+        // Check if the selected option is "Generate own map"
+        setShowCustomMapInput(selectedValue === "custom_gen");
+        // You can perform additional actions based on the selected option if needed
+      } catch (error) {
+        console.error(`Error loading JSON data for ${selectedValue}.json:`, error);
+      }
     };
 
   const handleCustomMapNameChange = (event) => {
